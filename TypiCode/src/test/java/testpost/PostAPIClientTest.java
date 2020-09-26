@@ -13,17 +13,24 @@ public class PostAPIClientTest {
     private PostsAPIClient postsAPIClient;
 
     @BeforeClass
-    public void setUpPostsAPI(){
-        this.postsAPIClient=new PostsAPIClient();
+    public void setUpPostsAPI() {
+        this.postsAPIClient = new PostsAPIClient();
     }
-    @Test(enabled = false)
-    public void testGetAllPosts(){
-        ValidatableResponse response=this.postsAPIClient.getAllPosts();
+
+    @Test
+    public void testGetAllPosts() {
+        ValidatableResponse response = this.postsAPIClient.getAllPosts();
+        response.statusCode(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void testDeleteAPost() {
+        ValidatableResponse response = this.postsAPIClient.deleteAPost();
         response.statusCode(HttpStatus.SC_OK);
     }
 
     // write a test that creates a post
-    @Test(enabled = false)
+    @Test
     public void testUserCanCreateAPostUsingPojoSuccessfully() {
         PostPojo obj = new PostPojo(11, 101, "test title", "test body");
         ValidatableResponse response = this.postsAPIClient.createPost(obj);
@@ -46,6 +53,27 @@ public class PostAPIClientTest {
         int actualUserId = response.extract().body().path("userId");
         String actualTitle = response.extract().body().path("title");
         String actualBody = response.extract().body().path("body");
+        Assert.assertEquals(actualUserId, userId);
+        Assert.assertEquals(actualTitle, title);
+        Assert.assertEquals(actualBody, body);
+    }
+
+    @Test
+    public void testUserCanCreateAPostSuccessfully1() {
+        int userId = 111;
+        String title = "test title1";
+        String body = "test body1";
+        JSONObject json = new JSONObject();
+        json.put("userId1", userId);
+        json.put("id1", 1011);
+        json.put("title1", title);
+        json.put("body1", body);
+        ValidatableResponse response = this.postsAPIClient.createPost1(json);
+        response.statusCode(HttpStatus.SC_CREATED);
+
+        int actualUserId = response.extract().body().path("userId1");
+        String actualTitle = response.extract().body().path("title1");
+        String actualBody = response.extract().body().path("body1");
         Assert.assertEquals(actualUserId, userId);
         Assert.assertEquals(actualTitle, title);
         Assert.assertEquals(actualBody, body);

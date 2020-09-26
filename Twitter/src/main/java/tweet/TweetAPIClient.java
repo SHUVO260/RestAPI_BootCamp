@@ -34,9 +34,13 @@ public class TweetAPIClient extends RestAPI {
 
     private final String GET_HOME_TIMELINE_USER_ENDPOINT="/statuses/home_timeline.json";
 
+    private final String READ_GET_USER_ENDPOINT = "/statuses/show.json";
+
+    private final String CREATE_RETWEET_ENDPOINT = "/statuses/retweet.json";
+
 
     /**
-     * UserTime Twwet
+     * UserTime Tweet
      * @return
      */
     public ValidatableResponse getUserTimeTweet() {
@@ -44,6 +48,16 @@ public class TweetAPIClient extends RestAPI {
                 .when().get(this.baseUrl + this.GET_USER_TWEET_ENDPOINT)
                 .then();
     }
+    /**
+     * GET All Tweet Information with valid data
+     */
+    public ValidatableResponse getUserTimeTweetWithValidData(int count, String screenName) {
+        return given().auth().oauth(this.apiKey, this.apiSecretKey, this.accessToken, this.accessTokenSecret)
+                .param("screen_Name", count, screenName)
+                .when().get(this.baseUrl + this.GET_USER_TWEET_ENDPOINT)
+                .then();
+    }
+
 
     /**
      * Create Tweet
@@ -83,6 +97,16 @@ public class TweetAPIClient extends RestAPI {
     }
 
     /**
+     * Create reTweet with invalid data
+     */
+    public ValidatableResponse createReTweetWithInvalidData(Long reTweetId){
+        return given().auth().oauth(this.apiKey, this.apiSecretKey, this.accessToken, this.accessTokenSecret)
+                .param("id", reTweetId)
+                .when().post(this.baseUrl+this.CREATE_RETWEET_ENDPOINT+"1234")
+                .then();
+    }
+
+    /**
      * UnReTweet
      * @param tweetId
      * @return
@@ -93,6 +117,18 @@ public class TweetAPIClient extends RestAPI {
                 .when().post(this.baseUrl + this.UNRETWEET_POST_USER_ENDPOINT)
                 .then();
     }
+
+    /**
+     * Un reTweet with invalid data
+     */
+    public ValidatableResponse unReTweetInvalidID(Long tweetId) {
+        return given().auth().oauth(this.apiKey, this.apiSecretKey, this.accessToken, this.accessTokenSecret)
+                .queryParam("id", tweetId)
+                .when().post(this.baseUrl + this.UNRETWEET_POST_USER_ENDPOINT)
+                .then();
+    }
+
+
     /**
      * Show TweetId
      * @param tweetId
@@ -102,6 +138,16 @@ public class TweetAPIClient extends RestAPI {
     public ValidatableResponse showTweetID(Long tweetId) {
         return given().auth().oauth(this.apiKey, this.apiSecretKey, this.accessToken, this.accessTokenSecret)
                 .param("id", tweetId)
+                .when().get(this.baseUrl + this.SHOW_GET_USER_ENDPOINT)
+                .then();
+    }
+
+    /**
+     * Show tweet with invalid data
+     */
+    public ValidatableResponse showTweetIDWithInvalidData(Long tweetId) {
+        return given().auth().oauth(this.apiKey, this.apiSecretKey, this.accessToken, this.accessTokenSecret)
+                .queryParam("id", tweetId)
                 .when().get(this.baseUrl + this.SHOW_GET_USER_ENDPOINT)
                 .then();
     }
@@ -118,6 +164,18 @@ public class TweetAPIClient extends RestAPI {
                 .when().post(this.baseUrl + this.FAVORITES_POST_USER_ENDPOINT)
                 .then();
     }
+
+    /**
+     * Favorites with invalid data
+     */
+    public ValidatableResponse favoritesTweetWithWrongFavoritesEndPoint(long tweetId) {
+        return given().auth().oauth(this.apiKey, this.apiSecretKey, this.accessToken, this.accessTokenSecret)
+                .param("id", tweetId)
+                .when().post(this.baseUrl + this.FAVORITES_POST_USER_ENDPOINT + "1234")
+                .then();
+    }
+
+
     /**
      * Negative Tweet
      * @param tweetId
@@ -144,26 +202,44 @@ public class TweetAPIClient extends RestAPI {
 
     /**
      *Favorite List
-     * @param count
+     * @param userId
      * @return
      */
-    public ValidatableResponse favoriteListTweet(int count, String favoriteList) {
+    public ValidatableResponse favoriteListTweet(String userId) {
         return given().auth().oauth(this.apiKey, this.apiSecretKey, this.accessToken, this.accessTokenSecret)
-                .param("id", count)
-                .params("screen_name", favoriteList)
+                .param("user_id", userId)
                 .when().get(this.baseUrl + this.FAVORITES_LIST_USER_ENDPOINT)
                 .then();
     }
 
     /**
-     * create Status LokUp
-     * @param tweetId
-     * @return
+     * Favorite List Invalid Data
      */
-    public ValidatableResponse getStatusLookUp(long tweetId) {
+
+    public ValidatableResponse favoriteListTweetWithInvalidEndPoint(String userId) {
         return given().auth().oauth(this.apiKey, this.apiSecretKey, this.accessToken, this.accessTokenSecret)
-                .queryParam("id", tweetId)
+                .param("user_id", userId)
+                .when().get(this.baseUrl + this.FAVORITES_LIST_USER_ENDPOINT+1)
+                .then();
+    }
+
+
+    /**
+     * create Status LookUp with valid data
+     */
+    public ValidatableResponse getStatusLookUp(int id,String tweetId) {
+        return given().auth().oauth(this.apiKey, this.apiSecretKey, this.accessToken, this.accessTokenSecret)
+                .queryParam("id",id, tweetId)
                 .when().get(this.baseUrl + this.STATUS_LOOKUP_GET_USER_ENDPOINT)
+                .then();
+    }
+    /**
+     * create Status LookUp with invalid data
+     */
+    public ValidatableResponse getStatusLookUpWithInvalidData(int id,String tweetId) {
+        return given().auth().oauth(this.apiKey, this.apiSecretKey, this.accessToken, this.accessTokenSecret)
+                .queryParam("id",id, tweetId)
+                .when().get(this.baseUrl + this.STATUS_LOOKUP_GET_USER_ENDPOINT+"1234")
                 .then();
     }
 
@@ -185,9 +261,40 @@ public class TweetAPIClient extends RestAPI {
      */
     public ValidatableResponse getTimeLineTweet() {
         return given().auth().oauth(this.apiKey, this.apiSecretKey, this.accessToken, this.accessTokenSecret)
-                .when().get(this.baseUrl + this.GET_HOME_TIMELINE_USER_ENDPOINT)
+                .when().get(this.baseUrl + this.GET_HOME_TIMELINE_USER_ENDPOINT )
                 .then();
     }
+
+    public ValidatableResponse getTimeLineTweetWithInvalidEndPoint() {
+        return given().auth().oauth(this.apiKey, this.apiSecretKey, this.accessToken, this.accessTokenSecret)
+                .when().get(this.baseUrl + this.GET_HOME_TIMELINE_USER_ENDPOINT+1 )
+                .then();
+    }
+
+    /**
+     * Create Read Tweet
+     * @param tweetId
+     * @return
+     */
+    public ValidatableResponse readTweet(Long tweetId) {
+        return given().auth().oauth(this.apiKey, this.apiSecretKey, this.accessToken, this.accessTokenSecret)
+                .param("id", tweetId)
+                .when().get(this.baseUrl + this.READ_GET_USER_ENDPOINT)
+                .then();
+    }
+
+    /**
+     * Create Re Tweet
+     * @param reTweetId
+     * @return
+     */
+    public ValidatableResponse createReTweet(Long reTweetId){
+        return given().auth().oauth(this.apiKey, this.apiSecretKey, this.accessToken, this.accessTokenSecret)
+                .param("id", reTweetId)
+                .when().post(this.baseUrl+this.CREATE_RETWEET_ENDPOINT)
+                .then();
+    }
+
 
 
 
